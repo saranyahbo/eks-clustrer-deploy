@@ -1,6 +1,6 @@
 resource "aws_eks_cluster" "eks-cluster" {
     name = "learn-eks-cluster"
-    role_arn = aws_iam_role.eks_cluster_iam_role.role_arn
+    role_arn = aws_iam_role.eks_cluster_iam_role.arn
     version = var.eks_version
     vpc_config {
         subnet_ids = data.aws_subnets.routable-subnets.ids

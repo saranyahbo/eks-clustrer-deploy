@@ -1,3 +1,76 @@
+#ec2 instance role for SSM
+resource "aws_iam_policy" "ssm_policy" {
+    name = "ssm-policy"
+    description = "IAM policy for SSM"
+    policy = jsonencode({
+        "Version" = "2012-10-17"
+        "Statement" = [
+            {
+                "Effect" = "Allow"
+                "Action" = [
+                    "ssm:DescribeInstanceInformation",
+                    "ssm:GetCommandInvocation",
+                    "ssm:ListCommands",
+                    "ssm:ListCommandInvocations",
+                    "ssm:SendCommand",
+                    "ssm:Describe*",
+                    "ssm:Get*",
+                    "ssm:List*"
+                ]
+                "Resource" = "*"
+            },
+            {
+                "Effect" = "Allow"
+                "Action" = [
+                    "ec2messages:AcknowledgeMessage",
+                    "ec2messages:DeleteMessage",
+                    "ec2messages:FailMessage",
+                    "ec2messages:GetEndpoint",
+                    "ec2messages:GetMessages",
+                    "ec2messages:SendReply"
+                ]
+                "Resource" = "*"
+            },
+            {
+                "Effect" = "Allow"
+                "Action" = [
+                    "ssmmessages:*"
+                ]
+                "Resource" = "*"
+            }
+        ]
+
+    })
+}
+
+resource "aws_iam_role" "ssm_role" {
+    name = "ssm_ec2-role"
+    assume_role_policy = jsonencode({
+        "Version" = "2012-10-17"
+        "Statement" = [
+            {
+                "Effect" = "Allow"
+                "Principal" = {
+                    "Service" = "ec2.amazonaws.com"
+                }
+                "Action" = "sts:AssumeRole"
+            }
+        ]
+    })
+
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_policy_attachment" {
+    role = aws_iam_role.ssm_role.name
+    policy_arn = aws_iam_policy.ssm_policy.arn
+}
+
+resource "aws_iam_instance_profile" "ssm_instance_profile" {
+    name = "ssm_instance_profile"
+    role = aws_iam_role.ssm_role.name
+}
+
+
 ## IAM Cluster role for EKS
 resource "aws_iam_role" "eks_cluster_iam_role" {
     name = "eks_cluster_iam_role"
@@ -21,6 +94,10 @@ resource "aws_iam_role_policy_attachment" "EKSClusterPolicy" {
     role = aws_iam_role.eks_cluster_iam_role.name
 }
 
+resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly-EKS" {
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+    role = aws_iam_role.eks_cluster_iam_role.name
+}
 ##IAM role for EKS worker node
 resource "aws_iam_role" "EKSWorkerNoderole" {
     name = "eks_worker_node_role"
@@ -55,3 +132,4 @@ resource "aws_iam_role_policy_attachment" "EC2ContainerRegistryPolicy" {
     policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
     role = aws_iam_role.eks_worker_node_role.name
 }
+

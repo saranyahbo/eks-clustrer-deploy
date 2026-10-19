@@ -120,16 +120,15 @@ data "aws_iam_policy_document" "eks_worker_role_policy" {
 ## for kubernetes worker functionality
 resource "aws_iam_role_policy_attachment" "EKSWorkerNodePolicy" {
     policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-    role = aws_iam_role.eks_worker_node_role.name
+    role = aws_iam_role.EKSWorkerNoderole.name
 }
 ## For Pod networking/ENI allocation
 resource "aws_iam_role_policy_attachment" "EKSCNIPolicy" {
     policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-    role = aws_iam_role.eks_worker_node_role.name
+    role = aws_iam_role.EKSWorkerNoderole.name
 }
 ## to pull Docker images from ECR
 resource "aws_iam_role_policy_attachment" "EC2ContainerRegistryPolicy" {
     policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-    role = aws_iam_role.eks_worker_node_role.name
+    role = aws_iam_role.EKSWorkerNoderole.name
 }
-

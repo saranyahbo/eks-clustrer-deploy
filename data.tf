@@ -17,8 +17,8 @@ data "aws_subnets" "routable-subnets" {
       values = [data.aws_vpc.eks_vpc.id]
     }
     filter {
-      name= availability-zone
-      values = [var.preferred_azs[0]]
+      name   = "availability-zone"
+      values = var.preferred_azs
     }
 }
 

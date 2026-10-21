@@ -47,6 +47,23 @@ resource "aws_instance" "bastion-host" {
   EOF
 }
 
+resource "tls_private_key" "ec2_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+# Register public key in AWS
+resource "aws_key_pair" "ec2_key" {
+  key_name   = "eks-ssh-key"
+  public_key = tls_private_key.ec2_key.public_key_openssh
+}
+
+resource "local_sensitive_file" "private_key" {
+  content         = tls_private_key.ec2_key.private_key_pem
+  filename        = "${path.module}/dev-ec2-key.pem"
+  file_permission = "0400"
+}
+
 resource "aws_security_group" "bastion-sg" {
   name        = "bastion-sg"
   description = "Security group for bastion host"

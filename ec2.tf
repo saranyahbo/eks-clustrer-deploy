@@ -28,7 +28,7 @@ resource "aws_instance" "bastion-host" {
     user_data = templatefile("./templates/eks_user_data_script.sh", {
         region = "us-east-1"
         cluster_name = aws_eks_cluster.eks-cluster.name
-        node_group_name = eks_node_group.worker_node_group.node_group_name
+        node_group_name = aws_eks_node_group.worker_node_group.node_group_name
         node_group_role_arn = aws_iam_role.EKSWorkerNoderole.arn
     })
 

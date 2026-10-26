@@ -40,11 +40,10 @@ aws --version
 # 3. Install kubectl
 # ==========================================
 
-# Set this to your EKS cluster's Kubernetes minor version.
-K8S_VERSION="1.34"
+K8S_VERSION="${k8s_version}"
 
 curl -fsSL \
-"https://s3.us-west-2.amazonaws.com/amazon-eks/${K8S_VERSION}/releases/latest/bin/linux/amd64/kubectl" \
+"https://s3.us-west-2.amazonaws.com/amazon-eks/$${K8S_VERSION}/releases/latest/bin/linux/amd64/kubectl" \
 -o /usr/local/bin/kubectl
 
 chmod +x /usr/local/bin/kubectl
@@ -55,11 +54,8 @@ kubectl version --client
 # 4. Install eksctl
 # ==========================================
 
-ARCH=amd64
-PLATFORM=Linux_${ARCH}
-
 curl -fsSL \
-"https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_${PLATFORM}.tar.gz" \
+"https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_Linux_${eksctl_architecture}.tar.gz" \
 -o eksctl.tar.gz
 
 tar -xzf eksctl.tar.gz -C /tmp
@@ -109,11 +105,14 @@ docker --version
 # 8. Install Argo CD CLI
 # ==========================================
 
-ARGOCD_VERSION=$(curl -fsSL \
-https://raw.githubusercontent.com/argoproj/argo-cd/stable/VERSION)
+ARGOCD_VERSION="${argocd_version}"
+if [ -z "$${ARGOCD_VERSION}" ]; then
+    ARGOCD_VERSION=$(curl -fsSL \
+    https://raw.githubusercontent.com/argoproj/argo-cd/stable/VERSION)
+fi
 
 curl -fsSL \
-"https://github.com/argoproj/argo-cd/releases/download/v${ARGOCD_VERSION}/argocd-linux-amd64" \
+"https://github.com/argoproj/argo-cd/releases/download/v$${ARGOCD_VERSION}/argocd-linux-amd64" \
 -o /usr/local/bin/argocd
 
 chmod +x /usr/local/bin/argocd

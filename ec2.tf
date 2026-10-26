@@ -26,10 +26,13 @@ resource "aws_instance" "bastion-host" {
     iam_instance_profile = aws_iam_instance_profile.ssm_instance_profile.name
     key_name = "eks-ssh-key"
     user_data = templatefile("./templates/eks_user_data_script.sh", {
-        region = "us-east-1"
-        cluster_name = aws_eks_cluster.eks-cluster.name
-        node_group_name = aws_eks_node_group.worker_node_group.node_group_name
+        region              = "us-east-1"
+        cluster_name        = aws_eks_cluster.eks-cluster.name
+        node_group_name     = aws_eks_node_group.worker_node_group.node_group_name
         node_group_role_arn = aws_iam_role.EKSWorkerNoderole.arn
+        k8s_version         = var.k8s_version
+        eksctl_architecture = var.eksctl_architecture
+        argocd_version      = var.argocd_version
     })
 
 }

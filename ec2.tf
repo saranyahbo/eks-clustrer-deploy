@@ -25,26 +25,13 @@ resource "aws_instance" "bastion-host" {
     security_groups = [aws_security_group.bastion-sg.id]
     iam_instance_profile = aws_iam_instance_profile.ssm_instance_profile.name
     key_name = "eks-ssh-key"
-    user_data = <<-EOF
-    #!/bin/bash
-    set -euxo pipefail
+    user_data = templatefile("./templates/eks_user_data_script.sh", {
+        region = "us-east-1"
+        cluster_name = aws_eks_cluster.eks-cluster.name
+        node_group_name = eks_node_group.worker_node_group.node_group_name
+        node_group_role_arn = aws_iam_role.EKSWorkerNoderole.arn
+    })
 
-    dnf install -y awscli2 curl
-
-    # Install kubectl matching the cluster's Kubernetes version.
-    KUBECTL_VERSION=$(curl -fsSL \
-    https://dl.k8s.io/release/stable-${var.eks_version}.txt)
-
-    curl -fsSLo /tmp/kubectl \
-    "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl"
-
-    curl -fsSLo /tmp/kubectl.sha256 \
-    "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl.sha256"
-
-    cd /tmp
-    echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
-    install -m 0755 kubectl /usr/local/bin/kubectl
-  EOF
 }
 
 resource "tls_private_key" "ec2_key" {
@@ -73,13 +60,13 @@ resource "aws_security_group" "bastion-sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"  
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/16"]
   }
 
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/16"]
   }
 }

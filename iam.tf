@@ -70,6 +70,10 @@ resource "aws_iam_instance_profile" "ssm_instance_profile" {
     role = aws_iam_role.ssm_role.name
 }
 
+resource "aws_iam_role_policy_attachment" "SSMPolicy" {
+    policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    role = aws_iam_role.ssm_role.name
+}
 
 ## IAM Cluster role for EKS
 resource "aws_iam_role" "eks_cluster_iam_role" {
@@ -98,10 +102,7 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly-EK
     policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
     role = aws_iam_role.eks_cluster_iam_role.name
 }
-resource "aws_iam_role_policy_attachment" "SSMPolicy" {
-    policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-    role = aws_iam_role.ssm_role.name
-}
+
 
 ##IAM role for EKS worker node
 resource "aws_iam_role" "EKSWorkerNoderole" {

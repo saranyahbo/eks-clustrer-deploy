@@ -22,7 +22,7 @@ resource "aws_instance" "bastion-host" {
     ami = data.aws_ami.amazon-linux.id
     instance_type = "t3.micro"
     subnet_id = data.aws_subnets.routable-subnets.ids[0]
-    security_groups = [aws_security_group.bastion-sg.id]
+    vpc_security_group_ids = [aws_security_group.bastion-sg.id]
     iam_instance_profile = aws_iam_instance_profile.ssm_instance_profile.name
     key_name = "eks-ssh-key"
     user_data = templatefile("./templates/eks_user_data_script.sh", {
@@ -72,6 +72,6 @@ resource "aws_security_group" "bastion-sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/16"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }

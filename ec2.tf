@@ -34,7 +34,9 @@ resource "aws_instance" "bastion-host" {
         eksctl_architecture = var.eksctl_architecture
         argocd_version      = var.argocd_version
     })
-
+    tags = {
+      Name = "bastion-host"
+    }
 }
 
 resource "tls_private_key" "ec2_key" {

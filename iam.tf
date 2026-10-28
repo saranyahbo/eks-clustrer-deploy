@@ -151,7 +151,7 @@ resource "aws_iam_role_policy_attachment" "EC2ContainerRegistryPolicy" {
 
 resource "aws_eks_access_entry" "bastion_access" {
   cluster_name  = aws_eks_cluster.eks-cluster.name
-  principal_arn = data.aws_iam_role.ssm_role.arn
+  principal_arn = aws_iam_role.ssm_role.arn
   type          = "STANDARD"
 
   tags = {

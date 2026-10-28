@@ -75,6 +75,16 @@ resource "aws_iam_role_policy_attachment" "SSMPolicy" {
     role = aws_iam_role.ssm_role.name
 }
 
+resource "aws_iam_role_policy_attachment" "SSMPolicy1" {
+    policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+    role = aws_iam_role.ssm_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "SSMPolicy2" {
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+    role = aws_iam_role.ssm_role.name
+}
+
 ## IAM Cluster role for EKS
 resource "aws_iam_role" "eks_cluster_iam_role" {
     name = "eks_cluster_iam_role"
@@ -139,5 +149,24 @@ resource "aws_iam_role_policy_attachment" "EC2ContainerRegistryPolicy" {
     role = aws_iam_role.EKSWorkerNoderole.name
 }
 
+resource "aws_eks_access_entry" "bastion_access" {
+  cluster_name  = aws_eks_cluster.eks-cluster.name
+  principal_arn = data.aws_iam_role.ssm_role.arn
+  type          = "STANDARD"
 
+  tags = {
+    Name        = "eks-bastion-access"
+    Environment = "dev"
+  }
+}
 
+resource "aws_eks_access_policy_association" "bastion_admin" {
+  cluster_name  = aws_eks_cluster.eks-cluster.name
+  principal_arn = aws_eks_access_entry.bastion_access.principal_arn
+
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+}

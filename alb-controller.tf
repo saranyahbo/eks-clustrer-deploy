@@ -65,6 +65,7 @@ resource "kubernetes_service_account_v1" "alb_controller" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.LoadbalancerControllerPolicy
+    aws_iam_role_policy_attachment.LoadbalancerControllerPolicy,
+    aws_eks_access_policy_association.github_actions_kube_system_admin
   ]
 }

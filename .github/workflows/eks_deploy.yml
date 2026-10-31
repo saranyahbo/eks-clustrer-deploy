@@ -29,5 +29,7 @@ jobs:
             terraform init 
             terraform validate
             terraform apply -target=aws_eks_cluster.eks-cluster -auto-approve
+            terraform apply -target=aws_eks_access_policy_association.github_actions_kube_system_admin -auto-approve
+            sleep 30
             terraform plan
             terraform apply -auto-approve

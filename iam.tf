@@ -115,7 +115,7 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly-EK
 
 resource "aws_iam_role_policy_attachment" "LoadbalancerControllerPolicy" {
     policy_arn = "arn:aws:iam::598206844002:policy/AWSLoadBalancerControllerIAMPolicy"
-    role = aws_iam_role.eks_cluster_iam_role.name
+    role = aws_iam_role.alb_controller.name
 }
 
 ##IAM role for EKS worker node

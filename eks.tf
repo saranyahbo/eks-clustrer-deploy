@@ -10,5 +10,8 @@ resource "aws_eks_cluster" "eks-cluster" {
     access_config {
         authentication_mode = "API_AND_CONFIG_MAP"
   }
-    depends_on = [aws_iam_role.eks_cluster_iam_role]
+    depends_on = [
+        aws_iam_role_policy_attachment.EKSClusterPolicy,
+        aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly-EKS
+    ]
 }

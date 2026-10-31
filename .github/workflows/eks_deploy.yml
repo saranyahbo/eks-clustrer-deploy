@@ -28,5 +28,6 @@ jobs:
       run: |
             terraform init 
             terraform validate
+            terraform apply -target=aws_eks_cluster.eks-cluster -auto-approve
             terraform plan
             terraform apply -auto-approve

@@ -1,5 +1,9 @@
-data "aws_iam_openid_connect_provider" "eks_oidc" {
+resource "aws_iam_openid_connect_provider" "eks_oidc" {
   url = aws_eks_cluster.eks-cluster.identity[0].oidc[0].issuer
+
+  client_id_list = [
+    "sts.amazonaws.com"
+  ]
 }
 
 locals {
@@ -23,7 +27,7 @@ data "aws_iam_policy_document" "alb_controller_trust" {
       type = "Federated"
 
       identifiers = [
-        data.aws_iam_openid_connect_provider.eks_oidc.arn
+        aws_iam_openid_connect_provider.eks_oidc.arn
       ]
     }
 
